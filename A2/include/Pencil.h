@@ -3,6 +3,12 @@
 
 #include <string>
 #include <set>
+
+struct comparePencil {
+    bool operator() (const Pencil& lhs, const Pencil& rhs) const {
+        return lhs.getId() < rhs.getId();
+    }
+};
     
 class Pencil {
     private:
@@ -10,7 +16,6 @@ class Pencil {
     float _width;
     string _hardness_mark;
     string _point_size;
-    static set<Pencil> _pencils;
 
     public:
     Pencil(int id, float width, string hardness_mark, string point_size);
@@ -20,6 +25,7 @@ class Pencil {
     string getHMark();
     string getPointSize();
     static void print();
+    static set<Pencil, comparePencil> pencils;
 };
 
 #endif 

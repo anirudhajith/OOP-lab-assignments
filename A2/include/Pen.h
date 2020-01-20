@@ -3,6 +3,12 @@
 
 #include <string>
 #include <set>
+
+struct comparePen {
+    bool operator() (const Pen& lhs, const Pen& rhs) const {
+        return lhs.getId() < rhs.getId();
+    }
+};
     
 class Pen {
     private:
@@ -10,7 +16,6 @@ class Pen {
     float _width;
     string _color;
     string _style;
-    static set<Pen> _pens;
 
     public:
     Pen(int id, float width, string color, string style);
@@ -20,6 +25,7 @@ class Pen {
     string getColor();
     string getStyle();
     static void print();
+    static set<Pen, comparePen> pens;
 };
 
 #endif 
