@@ -1,0 +1,61 @@
+Classes:
+
+1) BTech
+	
+	Fields:
+
+		RollNumber rollNumber;
+		string hostel;
+		Faculty facad;
+		Faculty btpGuide;
+		float cgpa;	
+
+	Methods:
+
+		BTech(RollNumber r, string hostl, Faculty facd, float cg);
+		string getHostel();
+		Faculty getFacad();
+		void changeHostel(string);
+		Faculty getBTPGuide();
+		setBTPGuide(Faculty);
+
+2) DualDegree
+	
+	Fields:
+
+		RollNumber rollNumber;
+		string hostel;
+		Faculty facad;
+		Faculty ddpGuide;
+		Faculty taSupervisor;
+		float cgpa;
+	
+	Methods:
+		DualDegree(RollNumber r, string hostl, Faculty facd, float cg);
+		string getHostel();
+		Faculty getFacad();
+		void changeHostel(string);
+		Faculty getDDPGuide();
+		Faculty getTASupervisor();
+		setDDPGuide(Faculty);
+		setTASupervisor(Faculty);
+
+
+3) Faculty
+	
+	Fields:
+		string name;
+		bool isPermanent;
+	
+	Methods:
+		Faculty(string n, bool isPerm);
+
+4) IITM
+	
+	Fields:
+		vector<BTech> btStudents;
+		vector<DualDegree> ddStudents;
+	
+	Methods:
+		bool checkConstraints();
+
