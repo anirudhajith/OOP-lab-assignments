@@ -26,6 +26,7 @@ class InventoryItem {
     string getManufacturer();
     string getType();
     static void print();
+    static void remove(int id);
 };
 
 #endif 
