@@ -1,6 +1,5 @@
 #include <iostream>
-#include <math.h>
-#include <algorithm>
+#include <bits/stdc++.h>
 
 using namespace std;
 
@@ -54,6 +53,9 @@ class Rational: public Complex {
     
     void reduce() {
         int gcd = GCD(numerator, denominator);
+        if ((numerator < 0 && denominator > 0) || (numerator > 0 && denominator < 0))
+            gcd = -gcd;
+            
         cout << (numerator / gcd) << " " << (denominator / gcd) << endl;
     }
     
@@ -84,9 +86,7 @@ class Natural: public Rational {
     Natural(int n): Rational(n, 1) {}
     
     bool checkPrime() {
-        int limit = sqrt(numerator);
-
-        for(int factor = 2; factor < limit; factor++) {
+        for(int factor = 2; factor * factor <= numerator; factor++) {
             if (numerator % factor == 0) return false;
         }
         
