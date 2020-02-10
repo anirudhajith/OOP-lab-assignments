@@ -81,6 +81,7 @@ class stack {
     void pop();
     T top();
     bool empty();
+    void print();
 };
 
 template <class T>
@@ -105,6 +106,24 @@ bool stack<T>::empty() {
     return S.empty();
 }
 
+template <class T>
+void stack<T>::print() {
+    cout << "Stack: ";
+    for(typename list<T>::iterator i = S.begin(); i != S.end(); i++) {
+        cout << *i << " ";
+    }
+    cout << endl;
+}
+
+int precedence(char op){ 
+    if(op == '+'|| op == '-') {
+        return 1;
+    } else if(op == '*'||op == '/') {
+        return 2;
+    }
+    return 0; 
+} 
+
 void processIntInput() {
 
     string line, token;
@@ -117,14 +136,15 @@ void processIntInput() {
     stack<char> operStack;
 
     while(ss >> token) {
+        //cout << "PROCESSING '" << token << "'" << endl; 
         // process each token
         // this will either be an oper, a parenthesis or an integer
         if (token == "*" || token == "+" || token == "-") {
             char newOper = token[0];
-            while (!operStack.empty()) {
+            while (!operStack.empty() && (precedence(operStack.top()) >= precedence(newOper))) {
                 char oper = operStack.top(); operStack.pop();
-                int b = valueStack.top(); operStack.pop();
-                int a = valueStack.top(); operStack.pop();
+                int b = valueStack.top(); valueStack.pop();
+                int a = valueStack.top(); valueStack.pop();
                 
                 int res;
                 switch(oper) {
@@ -146,8 +166,8 @@ void processIntInput() {
         } else if (token == ")") {
             while(operStack.top() != '(') {
                 char oper = operStack.top(); operStack.pop();
-                int b = valueStack.top(); operStack.pop();
-                int a = valueStack.top(); operStack.pop();
+                int b = valueStack.top(); valueStack.pop();
+                int a = valueStack.top(); valueStack.pop();
                 
                 int res;
                 switch(oper) {
@@ -167,13 +187,14 @@ void processIntInput() {
         } else {
             valueStack.push(stoi(token));
         }
-
+        //valueStack.print();
+        //operStack.print();
     }
-
+    //cout << "Finished reading" << endl;
     while (!operStack.empty()) {
         char oper = operStack.top(); operStack.pop();
-        int b = valueStack.top(); operStack.pop();
-        int a = valueStack.top(); operStack.pop();
+        int b = valueStack.top(); valueStack.pop();
+        int a = valueStack.top(); valueStack.pop();
         
         int res;
         switch(oper) {
@@ -213,10 +234,10 @@ void processPolyInput() {
             // this will be either an oper or a parenthesis
             if (token == "*" || token == "+" || token == "-") {
                 char newOper = token[0];
-                while (!operStack.empty()) {
+                while (!operStack.empty() && (precedence(operStack.top()) >= precedence(newOper))) {
                     char oper = operStack.top(); operStack.pop();
-                    Polynomial b = valueStack.top(); operStack.pop();
-                    Polynomial a = valueStack.top(); operStack.pop();
+                    Polynomial b = valueStack.top(); valueStack.pop();
+                    Polynomial a = valueStack.top(); valueStack.pop();
                     
                     Polynomial res;
                     switch(oper) {
@@ -238,8 +259,8 @@ void processPolyInput() {
             } else if (token == ")") {
                 while(operStack.top() != '(') {
                     char oper = operStack.top(); operStack.pop();
-                    Polynomial b = valueStack.top(); operStack.pop();
-                    Polynomial a = valueStack.top(); operStack.pop();
+                    Polynomial b = valueStack.top(); valueStack.pop();
+                    Polynomial a = valueStack.top(); valueStack.pop();
                     
                     Polynomial res;
                     switch(oper) {
@@ -276,8 +297,8 @@ void processPolyInput() {
 
     while (!operStack.empty()) {
         char oper = operStack.top(); operStack.pop();
-        Polynomial b = valueStack.top(); operStack.pop();
-        Polynomial a = valueStack.top(); operStack.pop();
+        Polynomial b = valueStack.top(); valueStack.pop();
+        Polynomial a = valueStack.top(); valueStack.pop();
         
         Polynomial res;
         switch(oper) {
