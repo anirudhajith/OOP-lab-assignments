@@ -1,7 +1,7 @@
 #include <vector>
 #include <iostream>
 #include <unordered_map>
-#include <unordered_set>
+#include <set>
 #include <queue>
 
 using namespace std;
@@ -20,6 +20,10 @@ class semiedge {
     const bool operator==(const semiedge &e) const {
         return (endpoint == e.endpoint) && (edgeType == e.edgeType);
     }
+
+    const bool operator < (const semiedge &e) const {
+        return (endpoint < e.endpoint) || (edgeType < e.edgeType);
+    }
 };
 
 class MyHashFunction { 
@@ -30,7 +34,7 @@ public:
 }; 
 
 // BFS utility funtion to discover all components created by type 2 edges
-void BFS(int startVertex, vector< unordered_set<semiedge, MyHashFunction> > &originalGraph, vector<int> &components, unordered_set<int> &remainingVertices) {
+void BFS(int startVertex, vector< set<semiedge> > &originalGraph, vector<int> &components, set<int> &remainingVertices) {
     queue<int> Q;
     vector<int> visitStatus(originalGraph.size(), 0);
 
@@ -43,7 +47,7 @@ void BFS(int startVertex, vector< unordered_set<semiedge, MyHashFunction> > &ori
         int toExplore = Q.front(); Q.pop();
         visitStatus[toExplore] = 2;
 
-        for(unordered_set<semiedge, MyHashFunction>::iterator neighbor = originalGraph[toExplore].begin(); neighbor != originalGraph[toExplore].end(); neighbor++) {
+        for(set<semiedge>::iterator neighbor = originalGraph[toExplore].begin(); neighbor != originalGraph[toExplore].end(); neighbor++) {
             if(neighbor->edgeType == 2 && visitStatus[neighbor->endpoint] == 0) {
                 Q.push(neighbor->endpoint);
                 visitStatus[neighbor->endpoint] = 1;
@@ -55,10 +59,10 @@ void BFS(int startVertex, vector< unordered_set<semiedge, MyHashFunction> > &ori
 }
 
 // returns components of each vertex among those created by type 2 edges
-vector<int> getComponents(vector< unordered_set<semiedge, MyHashFunction> > &originalGraph) {
+vector<int> getComponents(vector< set<semiedge> > &originalGraph) {
     int vertexCount = originalGraph.size();
 
-    unordered_set <int> remainingVertices;
+    set <int> remainingVertices;
     vector<int> components(vertexCount, 0);
     for(int v=0; v < vertexCount; v++) {
         remainingVertices.insert(v);
@@ -75,7 +79,7 @@ vector<int> getComponents(vector< unordered_set<semiedge, MyHashFunction> > &ori
 }
 
 // returns a graph where every type 2 component is represented by as single vertex and the original edge set has been mapped
-vector< unordered_set<semiedge, MyHashFunction> > getComponentGraph(vector< unordered_set<semiedge, MyHashFunction> > &originalGraph, vector<int> &components) {
+vector< set<semiedge> > getComponentGraph(vector< set<semiedge> > &originalGraph, vector<int> &components) {
     int vertexCount = originalGraph.size();
 
     unordered_map<int, int> componentAlias;
@@ -92,14 +96,25 @@ vector< unordered_set<semiedge, MyHashFunction> > getComponentGraph(vector< unor
     */
     cout << "joafjowe" << endl;
 
-    vector< unordered_set<semiedge, MyHashFunction> > componentGraph(componentAlias.size());
+    vector< set<semiedge> > componentGraph(componentAlias.size());
     
     for (int v = 0; v < vertexCount; v++) {
-        for(unordered_set<semiedge, MyHashFunction>::iterator e = originalGraph[v].begin(); e != originalGraph[v].end(); e++) {
+        for(set<semiedge>::iterator e = originalGraph[v].begin(); e != originalGraph[v].end(); e++) {
             if (components[v] != components[e->endpoint]) {
                 cout << "inserting " << e->endpoint << " " << v << " " << e->edgeType << endl;
-                cout << "numBuckets: " << componentGraph[componentAlias[components[v]]].bucket_count() << endl;
-                componentGraph[componentAlias[components[v]]].emplace(componentAlias[components[e->endpoint]], e->edgeType);
+                //cout << "numBuckets: " << componentGraph[componentAlias[components[v]]].bucket_count() << endl;
+                components[v];
+                cout << "a" << endl;
+                componentAlias[components[v]];
+                cout << "b" << endl;
+                componentGraph[componentAlias[components[v]]];//.emplace(componentAlias[components[e->endpoint]], e->edgeType);
+                cout << "c" << endl;
+                components[e->endpoint];
+                cout << "d" << endl;
+                componentAlias[components[e->endpoint]];
+                cout << "e" << endl;
+                componentGraph[componentAlias[components[v]]].insert(semiedge(componentAlias[components[e->endpoint]], e->edgeType));
+                
                 cout << "finished inserting " << e->endpoint << " " << v << " " << e->edgeType << endl;
             }
         }
@@ -109,7 +124,7 @@ vector< unordered_set<semiedge, MyHashFunction> > getComponentGraph(vector< unor
 }
 
 // checks if resultant component graph is connected
-bool isConnected(vector< unordered_set<semiedge, MyHashFunction> > &componentGraph) {
+bool isConnected(vector< set<semiedge> > &componentGraph) {
     queue<int> Q;
     vector<int> visitStatus(componentGraph.size(), 0);
     
@@ -121,7 +136,7 @@ bool isConnected(vector< unordered_set<semiedge, MyHashFunction> > &componentGra
         int toExplore = Q.front(); Q.pop();
         visitStatus[toExplore] = 2;
 
-        for(unordered_set<semiedge, MyHashFunction>::iterator neighbor = componentGraph[toExplore].begin(); neighbor != componentGraph[toExplore].end(); neighbor++) {
+        for(set<semiedge>::iterator neighbor = componentGraph[toExplore].begin(); neighbor != componentGraph[toExplore].end(); neighbor++) {
             if((neighbor->edgeType == 0 && componentGraph[toExplore].count(semiedge(1, neighbor->endpoint)) > 0 || 
                 neighbor->edgeType == 1 && componentGraph[toExplore].count(semiedge(0, neighbor->endpoint)) > 0) &&
                 visitStatus[neighbor->endpoint] == 0) {
@@ -142,7 +157,7 @@ int main() {
     cin >> N >> M;
 
     // adjacency list representation of original graph
-    vector< unordered_set<semiedge, MyHashFunction> > originalGraph(N);
+    vector< set<semiedge> > originalGraph(N);
 
 
     for(int m=0; m < M; m++) {
@@ -157,12 +172,12 @@ int main() {
     
     cout << "Got components" << endl;
 
-    vector< unordered_set<semiedge, MyHashFunction> > componentGraph = getComponentGraph(originalGraph, components);
+    vector< set<semiedge> > componentGraph = getComponentGraph(originalGraph, components);
 
     cout << "Got componentGraph" << endl;
 /*
     for(int i=0; i<componentGraph.size(); i++) {
-        for(unordered_set<semiedge, MyHashFunction>::iterator j = componentGraph[i].begin(); j != componentGraph[i].end(); j++) {
+        for(set<semiedge>::iterator j = componentGraph[i].begin(); j != componentGraph[i].end(); j++) {
             cout << "(" << i << ", " << j->endpoint << ")" << endl;
         }
     }
