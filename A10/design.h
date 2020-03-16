@@ -13,7 +13,7 @@ class semiedge {
 };
 
 // BFS utility funtion to discover all components created by type 2 edges
-void BFS(vector< vector<semiedge> > &originalGraph, vector<int> &components, unordered_set<int> &remainingVertices);
+void BFS(int startVertex, vector< vector<semiedge> > &originalGraph, vector<int> &components, unordered_set<int> &remainingVertices);
 
 // returns components of each vertex among those created by type 2 edges
 vector<int> getComponents(vector< vector<semiedge> > &originalGraph);
