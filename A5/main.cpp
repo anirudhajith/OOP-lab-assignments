@@ -4,31 +4,31 @@
 #include <iostream>
 #include <math.h>
 
-#define POLY_LIMIT 10
+#define POLY_LIMIT 2000
 
 using namespace std;
 
 class Polynomial {   
 
     private:
-    int coefficients[2 * POLY_LIMIT + 1];
+    long long int coefficients[POLY_LIMIT + 1];
         
     public:    
     Polynomial() {
-        for(int i=0; i <= 2 * POLY_LIMIT; i++) {
+        for(long long int i=0; i <= POLY_LIMIT; i++) {
             coefficients[i] = 0;
         }
     }
     
-    Polynomial(int* coeff) {
-        for(int i=0; i <= 2 * POLY_LIMIT; i++) {
+    Polynomial(long long int* coeff) {
+        for(long long int i=0; i <= POLY_LIMIT; i++) {
             coefficients[i] = coeff[i];
         }
     }
     
     Polynomial operator +(Polynomial p) {
         Polynomial res;
-        for(int i=0; i<= 2 * POLY_LIMIT; i++) {
+        for(long long int i=0; i<= POLY_LIMIT; i++) {
             res.coefficients[i] = coefficients[i] + p.coefficients[i];
         }
         
@@ -37,7 +37,7 @@ class Polynomial {
     
     Polynomial operator -(Polynomial p) {
         Polynomial res;
-        for(int i=0; i<= 2 * POLY_LIMIT; i++) {
+        for(long long int i=0; i<= POLY_LIMIT; i++) {
             res.coefficients[i] = coefficients[i] - p.coefficients[i];
         }
         
@@ -47,8 +47,8 @@ class Polynomial {
     Polynomial operator *(Polynomial p) {
         Polynomial res;
         
-        for(int i=0; i<= POLY_LIMIT; i++) {
-            for(int j=0; j <= POLY_LIMIT; j++) {
+        for(long long int i=0; i<= POLY_LIMIT; i++) {
+            for(long long int j=0; j <= POLY_LIMIT - i; j++) {
                 res.coefficients[i + j] += coefficients[i] * p.coefficients[j];
             }
         }
@@ -59,11 +59,11 @@ class Polynomial {
     void print() {
         bool firstTerm = true;
         
-        for(int i=0; i <= 2 * POLY_LIMIT; i++) {
+        for(long long int i=0; i <= POLY_LIMIT; i++) {
             if(coefficients[i] != 0) {
-                cout << (firstTerm ? (coefficients[i] > 0 ? "" : "-") : (coefficients[i] > 0 ? "+ " : "- ")) // sign
-                     << fabs(coefficients[i]) // value
-                     << "x^" << i << " ";     // term
+                cout << (firstTerm ? (coefficients[i] > 0 ? "" : "-") : (coefficients[i] > 0 ? " + " : " - ")) // sign
+                     << llabs(coefficients[i]) // value
+                     << "x^" << i;     // term
                 firstTerm = false;
             }
         }
@@ -110,12 +110,12 @@ template <class T>
 void stack<T>::print() {
     cout << "Stack: ";
     for(typename list<T>::iterator i = S.begin(); i != S.end(); i++) {
-        cout << *i << " ";
+        i->print();
     }
     cout << endl;
 }
 
-int precedence(char op){ 
+long long int precedence(char op){ 
     if(op == '+'|| op == '-') {
         return 1;
     } else if(op == '*'||op == '/') {
@@ -132,7 +132,7 @@ void processIntInput() {
 
     stringstream ss(line);
     
-    stack<int> valueStack;
+    stack<long long int> valueStack;
     stack<char> operStack;
 
     while(ss >> token) {
@@ -143,10 +143,10 @@ void processIntInput() {
             char newOper = token[0];
             while (!operStack.empty() && (precedence(operStack.top()) >= precedence(newOper))) {
                 char oper = operStack.top(); operStack.pop();
-                int b = valueStack.top(); valueStack.pop();
-                int a = valueStack.top(); valueStack.pop();
+                long long int b = valueStack.top(); valueStack.pop();
+                long long int a = valueStack.top(); valueStack.pop();
                 
-                int res;
+                long long int res;
                 switch(oper) {
                     case '+':
                         res = a + b;
@@ -166,10 +166,10 @@ void processIntInput() {
         } else if (token == ")") {
             while(operStack.top() != '(') {
                 char oper = operStack.top(); operStack.pop();
-                int b = valueStack.top(); valueStack.pop();
-                int a = valueStack.top(); valueStack.pop();
+                long long int b = valueStack.top(); valueStack.pop();
+                long long int a = valueStack.top(); valueStack.pop();
                 
-                int res;
+                long long int res;
                 switch(oper) {
                     case '+':
                         res = a + b;
@@ -185,7 +185,7 @@ void processIntInput() {
             }
             operStack.pop();
         } else {
-            valueStack.push(stoi(token));
+            valueStack.push(stoll(token));
         }
         //valueStack.print();
         //operStack.print();
@@ -193,10 +193,10 @@ void processIntInput() {
     //cout << "Finished reading" << endl;
     while (!operStack.empty()) {
         char oper = operStack.top(); operStack.pop();
-        int b = valueStack.top(); valueStack.pop();
-        int a = valueStack.top(); valueStack.pop();
+        long long int b = valueStack.top(); valueStack.pop();
+        long long int a = valueStack.top(); valueStack.pop();
         
-        int res;
+        long long int res;
         switch(oper) {
             case '+':
                 res = a + b;
@@ -215,7 +215,7 @@ void processIntInput() {
 }
 
 void processPolyInput() {
-    int num;
+    long long int num;
     std::cin >> num;
 
     std::string line;
@@ -225,9 +225,10 @@ void processPolyInput() {
     stack<Polynomial> valueStack;
     stack<char> operStack;
 
-    for(int i = 0; i < num; i++) {
+    for(long long int i = 0; i < num; i++) {
+        
         std::getline(std::cin, line);
-
+        //cout << "PROCESSING '" << line << "'" << endl; 
         if(line.size() == 1) {
             string token = line;
             // process the line
@@ -282,10 +283,10 @@ void processPolyInput() {
             // this will be a polynomial
             std::stringstream ss(line);
 
-            int coefficients[2 * POLY_LIMIT + 1];
+            long long int coefficients[POLY_LIMIT + 1] = {0};
 
-            int exponent;
-            long long coeff;
+            long long int exponent;
+            long long int coeff;
             while(ss >> exponent, ss >> coeff) {
                 // process the exponent and coefficient appropriately
                 coefficients[exponent] = coeff;
@@ -293,7 +294,10 @@ void processPolyInput() {
 
             valueStack.push(Polynomial(coefficients));
         }
+        //valueStack.print();
+        //operStack.print();
     }
+    //cout << "Finished reading" << endl;
 
     while (!operStack.empty()) {
         char oper = operStack.top(); operStack.pop();
@@ -321,10 +325,10 @@ void processPolyInput() {
 
 int main() {
 
-    int n; // number of expressions;
+    long long int n; // number of expressions;
     cin >> n;
     string queryType;
-    for(int testcase = 0; testcase < n; testcase++) {
+    for(long long int testcase = 0; testcase < n; testcase++) {
         cin >> queryType;
 
         if (queryType == "int") {

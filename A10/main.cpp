@@ -26,13 +26,6 @@ class semiedge {
     }
 };
 
-class MyHashFunction { 
-public: 
-    const size_t operator()(const semiedge& s) const { 
-        return (s.endpoint * s.edgeType) + 1;
-    } 
-}; 
-
 // BFS utility funtion to discover all components created by type 2 edges
 void BFS(int startVertex, vector< set<semiedge> > &originalGraph, vector<int> &components, set<int> &remainingVertices) {
     queue<int> Q;
@@ -113,7 +106,9 @@ vector< set<semiedge> > getComponentGraph(vector< set<semiedge> > &originalGraph
                 cout << "d" << endl;
                 componentAlias[components[e->endpoint]];
                 cout << "e" << endl;
-                componentGraph[componentAlias[components[v]]].insert(semiedge(componentAlias[components[e->endpoint]], e->edgeType));
+                semiedge S(componentAlias[components[e->endpoint]], e->edgeType);
+                cout << "f" << endl;
+                componentGraph[componentAlias[components[v]]].insert(S);
                 
                 cout << "finished inserting " << e->endpoint << " " << v << " " << e->edgeType << endl;
             }
